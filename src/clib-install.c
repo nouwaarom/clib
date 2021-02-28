@@ -131,7 +131,8 @@ static int install_local_packages(clib_package_t* root_package) {
     setenv("PREFIX", root_package->prefix, 1);
   }
 
-  int rc = clib_package_install_dependencies(root_package, opts.dir, opts.verbose);
+  char* dependency_dir = strlen(root_package->dependency_dir) > 0 ? root_package->dependency_dir : opts.dir;
+  int rc = clib_package_install_dependencies(root_package, dependency_dir, opts.verbose);
   if (-1 == rc)
     return 1;
 
@@ -260,13 +261,14 @@ static int install_package(clib_package_t* root_package, const char *slug) {
     package_opts.prefix = root_package->prefix;
   }
 
-  rc = clib_package_install(pkg, opts.dir, opts.verbose);
+  char* dependency_dir = strlen(pkg->dependency_dir) > 0 ? pkg->dependency_dir : opts.dir;
+  rc = clib_package_install(pkg, dependency_dir, opts.verbose);
   if (0 != rc) {
     goto cleanup;
   }
 
   if (0 == rc && opts.dev) {
-    rc = clib_package_install_development(pkg, opts.dir, opts.verbose);
+    rc = clib_package_install_development(pkg, dependency_dir, opts.verbose);
     if (0 != rc) {
       goto cleanup;
     }

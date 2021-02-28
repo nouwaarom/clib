@@ -342,6 +342,7 @@ clib_package_t *clib_package_new(const char *json, int verbose) {
   pkg->makefile = json_object_get_string_safe(json_object, "makefile");
   pkg->prefix = json_object_get_string_safe(json_object, "prefix");
   pkg->flags = json_object_get_string_safe(json_object, "flags");
+  pkg->dependency_dir = json_object_get_string_safe(json_object, "dependency_dir");
 
   if (!pkg->flags) {
     pkg->flags = json_object_get_string_safe(json_object, "cflags");
