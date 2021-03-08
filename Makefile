@@ -23,7 +23,7 @@ MAKEFILES = $(wildcard deps/*/Makefile)
 export CC
 
 ifdef STATIC
-	CFLAGS  += -DCURL_STATICLIB -std=c99 -Ideps -Wall -Wno-unused-function -U__STRICT_ANSI__ $(shell deps/curl/bin/curl-config --cflags)
+	CFLAGS  += -DCURL_STATICLIB -std=c99 -Ideps -Wall -Werror=return-type -Wno-unused-function -U__STRICT_ANSI__ $(shell deps/curl/bin/curl-config --cflags)
 	LDFLAGS += -static $(shell deps/curl/bin/curl-config --static-libs)
 else
 	CFLAGS  += -std=c99 -Ideps -Wall -Wno-unused-function -U__STRICT_ANSI__ $(shell curl-config --cflags)
