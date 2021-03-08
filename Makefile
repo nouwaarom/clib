@@ -12,8 +12,8 @@ RM      = rm -f
 MKDIR   = mkdir -p
 
 SRC  = $(wildcard src/*.c)
-COMMON_SRC = $(wildcard src/common/*.c)
-ALL_SRC = $(wildcard src/*.c src/*.h src/common/*.c src/common/*.h test/package/*.c test/cache/*.c)
+COMMON_SRC = $(wildcard src/common/*.c src/registry/*.c)
+ALL_SRC = $(wildcard src/*.c src/*.h src/common/*.c src/common/*.h src/registry/*.c src/registry/*.h test/package/*.c test/cache/*.c)
 SDEPS = $(wildcard deps/*/*.c)
 ODEPS = $(SDEPS:.c=.o)
 DEPS = $(filter-out $(ODEPS), $(SDEPS))
@@ -26,7 +26,7 @@ ifdef STATIC
 	CFLAGS  += -DCURL_STATICLIB -std=c99 -Ideps -Wall -Werror=return-type -Wno-unused-function -U__STRICT_ANSI__ $(shell deps/curl/bin/curl-config --cflags)
 	LDFLAGS += -static $(shell deps/curl/bin/curl-config --static-libs)
 else
-	CFLAGS  += -std=c99 -Ideps -Wall -Wno-unused-function -U__STRICT_ANSI__ $(shell curl-config --cflags)
+	CFLAGS  += -std=c99 -Ideps -g -Wall -Werror=return-type -Wno-unused-function -U__STRICT_ANSI__ $(shell curl-config --cflags)
 	LDFLAGS += $(shell curl-config --libs)
 endif
 
