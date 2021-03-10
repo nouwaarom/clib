@@ -1,4 +1,4 @@
-CC     ?= cc
+CC     ?= gcc
 PREFIX ?= /usr/local
 
 BINS = clib clib-install clib-search clib-init clib-configure clib-build clib-update clib-upgrade clib-uninstall
@@ -18,7 +18,6 @@ SDEPS = $(wildcard deps/*/*.c)
 ODEPS = $(SDEPS:.c=.o)
 DEPS = $(filter-out $(ODEPS), $(SDEPS))
 OBJS = $(DEPS:.c=.o)
-MAKEFILES = $(wildcard deps/*/Makefile)
 
 export CC
 
@@ -26,7 +25,7 @@ ifdef STATIC
 	CFLAGS  += -DCURL_STATICLIB -std=c99 -Ideps -Wall -Werror=return-type -Wno-unused-function -U__STRICT_ANSI__ $(shell deps/curl/bin/curl-config --cflags)
 	LDFLAGS += -static $(shell deps/curl/bin/curl-config --static-libs)
 else
-	CFLAGS  += -std=c99 -Ideps -g -Wall -Werror=return-type -Wno-unused-function -U__STRICT_ANSI__ $(shell curl-config --cflags)
+	CFLAGS  += -std=gnu17 -Ideps -g -Wall -Werror=return-type -Wno-unused-function $(shell curl-config --cflags)
 	LDFLAGS += $(shell curl-config --libs)
 endif
 
@@ -46,7 +45,7 @@ all: $(BINS)
 
 build: $(BINS)
 
-$(BINS): $(SRC) $(MAKEFILES) $(OBJS)
+$(BINS): $(SRC) $(COMMON_SRC) $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(COMMON_SRC) src/$(@:.exe=).c $(OBJS) $(LDFLAGS)
 
 $(MAKEFILES):
