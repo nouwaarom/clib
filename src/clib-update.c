@@ -237,7 +237,7 @@ static int install_package(const char *slug) {
   }
 
   if (!pkg) {
-    pkg = clib_package_new_from_slug(slug, opts.verbose);
+    pkg = clib_package_new_from_slug_and_url(slug, opts.verbose);
   }
 
   if (NULL == pkg)

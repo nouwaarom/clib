@@ -4,7 +4,7 @@
 #include "wiki-registry.h"
 
 struct wiki_package_t {
-    char *repo;
+    char *id;
     char *href;
     char *description;
     char *category;

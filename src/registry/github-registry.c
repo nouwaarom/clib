@@ -22,10 +22,10 @@
  * Add `href` to the given `package`.
  */
 static void add_package_href(wiki_package_ptr_t self) {
-    size_t len = strlen(self->repo) + 20; // https://github.com/ \0
+    size_t len = strlen(self->id) + 20; // https://github.com/ \0
     self->href = malloc(len);
     if (self->href)
-        sprintf(self->href, "https://github.com/%s", self->repo);
+        sprintf(self->href, "https://github.com/%s", self->id);
 }
 
 /**
@@ -45,11 +45,11 @@ static wiki_package_ptr_t parse_li(GumboNode *li) {
     if (!tok) goto cleanup;
 
     int pos = tok - text;
-    self->repo = substr(text, 0, pos);
+    self->id = substr(text, 0, pos);
     self->description = substr(text, pos + 3, -1);
-    if (!self->repo || !self->description) goto cleanup;
+    if (!self->id || !self->description) goto cleanup;
     trim(self->description);
-    trim(self->repo);
+    trim(self->id);
 
     add_package_href(self);
 
