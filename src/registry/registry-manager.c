@@ -1,3 +1,9 @@
+//
+// registry-manager.c
+//
+// Copyright (c) 2021 Elbert van de Put
+// MIT licensed
+//
 #include "registry-manager.h"
 #include <stdlib.h>
 #include "url/url.h"
@@ -16,13 +22,13 @@ registries_t registry_manager_init_registries(list_t* registry_urls, clib_secret
     char* hostname = strdup(parsed->hostname);
     url_free(parsed);
     char* secret = clib_secret_find_for_hostname(secrets, hostname);
-    wiki_registry_ptr_t registry = wiki_registry_create(url, secret);
+    registry_ptr_t registry = registry_create(url, secret);
     list_rpush(registries, list_node_new(registry));
   }
   list_iterator_destroy(registry_iterator);
 
   // And add the default registry.
-  wiki_registry_ptr_t registry = wiki_registry_create(CLIB_WIKI_URL, NULL);
+  registry_ptr_t registry = registry_create(CLIB_WIKI_URL, NULL);
   list_rpush(registries, list_node_new(registry));
 
   return registries;
@@ -30,20 +36,20 @@ registries_t registry_manager_init_registries(list_t* registry_urls, clib_secret
 
 void registry_manager_fetch_registries(registries_t registries) {
   registry_iterator_t it = registry_iterator_new(registries);
-  wiki_registry_ptr_t reg;
+  registry_ptr_t reg;
   while ((reg = registry_iterator_next(it))) {
-      if (!wiki_registry_fetch(reg)) {
-      printf("REGISTRY: could not list packages from. %s\n", wiki_registry_get_url(reg));
+      if (!registry_fetch(reg)) {
+      printf("REGISTRY: could not list packages from. %s\n", registry_get_url(reg));
     }
   }
   registry_iterator_destroy(it);
 }
 
-wiki_package_ptr_t registry_manger_find_package(registries_t registries, const char* package_id) {
+registry_package_ptr_t registry_manger_find_package(registries_t registries, const char* package_id) {
   registry_iterator_t it = registry_iterator_new(registries);
-  wiki_registry_ptr_t reg;
+  registry_ptr_t reg;
   while ((reg = registry_iterator_next(it))) {
-    wiki_package_ptr_t package = wiki_registry_find_package(reg, package_id);
+    registry_package_ptr_t package = registry_find_package(reg, package_id);
     if (package != NULL) {
       registry_iterator_destroy(it);
       return package;
@@ -58,13 +64,13 @@ registry_iterator_t registry_iterator_new(registries_t registries) {
     return list_iterator_new(registries, LIST_HEAD);
 }
 
-wiki_registry_ptr_t registry_iterator_next(registry_iterator_t iterator) {
+registry_ptr_t registry_iterator_next(registry_iterator_t iterator) {
   list_node_t *node = list_iterator_next(iterator);
   if (node == NULL) {
     return NULL;
   }
 
-  return (wiki_registry_ptr_t) node->val;
+  return (registry_ptr_t) node->val;
 }
 
 void registry_iterator_destroy(registry_iterator_t iterator) {

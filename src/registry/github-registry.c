@@ -1,27 +1,27 @@
 //
 // github-registry.c
 //
-// Copyright (c) 2020 Elbert van de Put
+// Copyright (c) 2021 Elbert van de Put
 // Based on work by Stephen Mathieson
 // MIT licensed
 //
-#include <string.h>
 #include "github-registry.h"
-#include "gumbo-text-content/gumbo-text-content.h"
+#include "case/case.h"
 #include "gumbo-get-element-by-id/get-element-by-id.h"
 #include "gumbo-get-elements-by-tag-name/get-elements-by-tag-name.h"
+#include "gumbo-text-content/gumbo-text-content.h"
 #include "http-get/http-get.h"
-#include <curl/curl.h>
-#include "substr/substr.h"
+#include "registry-internal.h"
 #include "strdup/strdup.h"
-#include "case/case.h"
+#include "substr/substr.h"
 #include "trim/trim.h"
-#include "wiki-registry-internal.h"
+#include <curl/curl.h>
+#include <string.h>
 
 /**
  * Add `href` to the given `package`.
  */
-static void add_package_href(wiki_package_ptr_t self) {
+static void add_package_href(registry_package_ptr_t self) {
     size_t len = strlen(self->id) + 20; // https://github.com/ \0
     self->href = malloc(len);
     if (self->href)
@@ -31,8 +31,8 @@ static void add_package_href(wiki_package_ptr_t self) {
 /**
  * Parse the given wiki `li` into a package.
  */
-static wiki_package_ptr_t parse_li(GumboNode *li) {
-    wiki_package_ptr_t self = wiki_package_new();
+static registry_package_ptr_t parse_li(GumboNode *li) {
+  registry_package_ptr_t self = registry_package_new();
     char *text = NULL;
 
     if (!self) goto cleanup;
@@ -96,13 +96,14 @@ list_t *wiki_registry_parse(const char *html) {
             list_iterator_t *li_iterator = list_iterator_new(lis, LIST_HEAD);
             list_node_t *li_node;
             while ((li_node = list_iterator_next(li_iterator))) {
-                wiki_package_ptr_t package = parse_li(li_node->val);
+              registry_package_ptr_t package = parse_li(li_node->val);
                 if (package && package->description) {
                     package->category = strdup(category);
                     list_rpush(pkgs, list_node_new(package));
                 } else {
                     // failed to parse package
-                    if (package) wiki_package_free(package);
+                    if (package)
+                      registry_package_free(package);
                 }
             }
             list_iterator_destroy(li_iterator);

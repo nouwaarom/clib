@@ -17,7 +17,7 @@
 #include "logger/logger.h"
 #include "parson/parson.h"
 #include "registry-manager.h"
-#include "registry/wiki-registry.h"
+#include "registry/registry.h"
 #include "strdup/strdup.h"
 #include "tempdir/tempdir.h"
 #include "version.h"
@@ -63,7 +63,7 @@ static void setopt_json(command_t *self) { opt_json = 1; }
     }                                                                          \
   }
 
-static int matches(int count, char *args[], wiki_package_ptr_t pkg) {
+static int matches(int count, char *args[], registry_package_ptr_t pkg) {
     // Display all packages if there's no query
     if (0 == count)
         return 1;
@@ -74,16 +74,16 @@ static int matches(int count, char *args[], wiki_package_ptr_t pkg) {
     char *href = NULL;
     int rc = 0;
 
-    name = clib_package_parse_name(wiki_package_get_id(pkg));
+    name = clib_package_parse_name(registry_package_get_id(pkg));
     COMPARE(name);
 
-    description = strdup(wiki_package_get_description(pkg));
+    description = strdup(registry_package_get_description(pkg));
     COMPARE(description);
 
-    repo = strdup(wiki_package_get_id(pkg));
+    repo = strdup(registry_package_get_id(pkg));
     COMPARE(repo);
 
-    href = strdup(wiki_package_get_href(pkg));
+    href = strdup(registry_package_get_href(pkg));
     COMPARE(href);
 
     cleanup:
@@ -122,26 +122,26 @@ static char *wiki_html_cache() {
 }
 */
 
-static void display_package(const wiki_package_ptr_t pkg,
+static void display_package(const registry_package_ptr_t pkg,
                             cc_color_t fg_color_highlight,
                             cc_color_t fg_color_text) {
-    cc_fprintf(fg_color_highlight, stdout, "  %s\n", wiki_package_get_id(pkg));
+    cc_fprintf(fg_color_highlight, stdout, "  %s\n", registry_package_get_id(pkg));
     printf("  url: ");
-    cc_fprintf(fg_color_text, stdout, "%s\n", wiki_package_get_href(pkg));
+    cc_fprintf(fg_color_text, stdout, "%s\n", registry_package_get_href(pkg));
     printf("  desc: ");
-    cc_fprintf(fg_color_text, stdout, "%s\n", wiki_package_get_description(pkg));
+    cc_fprintf(fg_color_text, stdout, "%s\n", registry_package_get_description(pkg));
     printf("\n");
 }
 
-static void add_package_to_json(const wiki_package_ptr_t pkg,
+static void add_package_to_json(const registry_package_ptr_t pkg,
                                 JSON_Array *json_list) {
     JSON_Value *json_pkg_root = json_value_init_object();
     JSON_Object *json_pkg = json_value_get_object(json_pkg_root);
 
-    json_object_set_string(json_pkg, "repo", wiki_package_get_id(pkg));
-    json_object_set_string(json_pkg, "href", wiki_package_get_href(pkg));
-    json_object_set_string(json_pkg, "description", wiki_package_get_description(pkg));
-    json_object_set_string(json_pkg, "category", wiki_package_get_category(pkg));
+    json_object_set_string(json_pkg, "repo", registry_package_get_id(pkg));
+    json_object_set_string(json_pkg, "href", registry_package_get_href(pkg));
+    json_object_set_string(json_pkg, "description", registry_package_get_description(pkg));
+    json_object_set_string(json_pkg, "category", registry_package_get_category(pkg));
 
     json_array_append_value(json_list, json_pkg_root);
 }
@@ -198,11 +198,11 @@ int main(int argc, char *argv[]) {
      */
 
     registry_iterator_t it = registry_iterator_new(registries);
-    wiki_registry_ptr_t registry = NULL;
+    registry_ptr_t registry = NULL;
     while ((registry = registry_iterator_next(it))) {
-        printf("SEARCH: packages from %s\n", wiki_registry_get_url(registry));
-        wiki_package_ptr_t pkg;
-        wiki_registry_iterator_t it = wiki_registry_iterator_new(registry);
+        printf("SEARCH: packages from %s\n", registry_get_url(registry));
+        registry_package_ptr_t pkg;
+        registry_package_iterator_t it = registry_package_iterator_new(registry);
 
         JSON_Array *json_list = NULL;
         JSON_Value *json_list_root = NULL;
@@ -214,7 +214,7 @@ int main(int argc, char *argv[]) {
 
         printf("\n");
 
-        while ((pkg = wiki_registry_iterator_next(it))) {
+        while ((pkg = registry_package_iterator_next(it))) {
             if (matches(program.argc, program.argv, pkg)) {
                 if (opt_json) {
                     add_package_to_json(pkg, json_list);
@@ -222,7 +222,7 @@ int main(int argc, char *argv[]) {
                     display_package(pkg, fg_color_highlight, fg_color_text);
                 }
             } else {
-                debug(&debugger, "skipped package %s", wiki_package_get_id(pkg));
+                debug(&debugger, "skipped package %s", registry_package_get_id(pkg));
             }
         }
 
@@ -234,7 +234,7 @@ int main(int argc, char *argv[]) {
             json_value_free(json_list_root);
         }
 
-        wiki_registry_iterator_destroy(it);
+        registry_package_iterator_destroy(it);
     }
     command_free(&program);
     return 0;

@@ -1,7 +1,7 @@
 //
-// wiki-registry.c
+// registry.c
 //
-// Copyright (c) 2014 Stephen Mathieson
+// Copyright (c) 2020 clib authors
 // MIT licensed
 //
 
@@ -9,18 +9,18 @@
 #include "gitlab-registry.h"
 #include "gumbo-parser/gumbo.h"
 #include "list/list.h"
+#include "registry-internal.h"
 #include "url/url.h"
-#include "wiki-registry-internal.h"
 #include <stdlib.h>
 #include <string.h>
 
-enum wiki_registry_type_t {
+enum registry_type_t {
   REGISTRY_TYPE_GITHUB,
   REGISTRY_TYPE_GITLAB,
 };
 
-struct wiki_registry_t {
-  enum wiki_registry_type_t type;
+struct registry_t {
+  enum registry_type_t type;
   char *url;
   char *hostname;
   char *secret;
@@ -28,10 +28,10 @@ struct wiki_registry_t {
 };
 
 /**
- * Create a new wiki package.
+ * Create a new registry package.
  */
-wiki_package_ptr_t wiki_package_new() {
-  wiki_package_ptr_t pkg = malloc(sizeof(struct wiki_package_t));
+registry_package_ptr_t registry_package_new() {
+  registry_package_ptr_t pkg = malloc(sizeof(struct registry_package_t));
   if (pkg) {
     pkg->id = NULL;
     pkg->href = NULL;
@@ -42,9 +42,9 @@ wiki_package_ptr_t wiki_package_new() {
 }
 
 /**
- * Free a wiki_package_t.
+ * Release the memory held by the package.
  */
-void wiki_package_free(wiki_package_ptr_t pkg) {
+void registry_package_free(registry_package_ptr_t pkg) {
   free(pkg->id);
   free(pkg->href);
   free(pkg->description);
@@ -52,8 +52,8 @@ void wiki_package_free(wiki_package_ptr_t pkg) {
   free(pkg);
 }
 
-wiki_registry_ptr_t wiki_registry_create(const char *url, const char *secret) {
-  wiki_registry_ptr_t registry = malloc(sizeof(struct wiki_registry_t));
+registry_ptr_t registry_create(const char *url, const char *secret) {
+  registry_ptr_t registry = malloc(sizeof(struct registry_t));
   registry->url = strdup(url);
   registry->secret = strdup(secret);
 
@@ -72,14 +72,14 @@ wiki_registry_ptr_t wiki_registry_create(const char *url, const char *secret) {
   return registry;
 }
 
-void wiki_registry_free(wiki_registry_ptr_t registry) {
+void registry_free(registry_ptr_t registry) {
   free(registry->url);
   free(registry->hostname);
   if (registry->packages != NULL) {
     list_iterator_t *it = list_iterator_new(registry->packages, LIST_HEAD);
     list_node_t *node;
     while ((node = list_iterator_next(it))) {
-      wiki_package_free(node->val);
+      registry_package_free(node->val);
     }
     list_iterator_destroy(it);
     list_destroy(registry->packages);
@@ -87,11 +87,11 @@ void wiki_registry_free(wiki_registry_ptr_t registry) {
   free(registry);
 }
 
-const char *wiki_registry_get_url(wiki_registry_ptr_t registry) {
+const char *registry_get_url(registry_ptr_t registry) {
   return registry->url;
 }
 
-bool wiki_registry_fetch(wiki_registry_ptr_t registry) {
+bool registry_fetch(registry_ptr_t registry) {
   switch (registry->type) {
   case REGISTRY_TYPE_GITLAB:
     registry->packages = gitlab_registry_fetch(registry->url, registry->hostname, registry->secret);
@@ -112,49 +112,49 @@ bool wiki_registry_fetch(wiki_registry_ptr_t registry) {
   return false;
 }
 
-wiki_registry_iterator_t wiki_registry_iterator_new(wiki_registry_ptr_t registry) {
+registry_package_iterator_t registry_package_iterator_new(registry_ptr_t registry) {
   return list_iterator_new(registry->packages, LIST_HEAD);
 }
 
-wiki_package_ptr_t wiki_registry_iterator_next(wiki_registry_iterator_t iterator) {
+registry_package_ptr_t registry_package_iterator_next(registry_package_iterator_t iterator) {
   list_node_t *node = list_iterator_next(iterator);
   if (node == NULL) {
     return NULL;
   }
 
-  return (wiki_package_ptr_t) node->val;
+  return (registry_package_ptr_t) node->val;
 }
 
-void wiki_registry_iterator_destroy(wiki_registry_iterator_t iterator) {
+void registry_package_iterator_destroy(registry_package_iterator_t iterator) {
   list_iterator_destroy(iterator);
 }
 
-wiki_package_ptr_t wiki_registry_find_package(wiki_registry_ptr_t registry, const char *package_id) {
-  wiki_registry_iterator_t it = wiki_registry_iterator_new(registry);
-  wiki_package_ptr_t pack;
-  while ((pack = wiki_registry_iterator_next(it))) {
+registry_package_ptr_t registry_find_package(registry_ptr_t registry, const char *package_id) {
+  registry_package_iterator_t it = registry_package_iterator_new(registry);
+  registry_package_ptr_t pack;
+  while ((pack = registry_package_iterator_next(it))) {
     if (0 == strcmp(package_id, pack->id)) {
-      wiki_registry_iterator_destroy(it);
+      registry_package_iterator_destroy(it);
       return pack;
     }
   }
-  wiki_registry_iterator_destroy(it);
+  registry_package_iterator_destroy(it);
 
   return NULL;
 }
 
-char *wiki_package_get_id(wiki_package_ptr_t package) {
+char *registry_package_get_id(registry_package_ptr_t package) {
   return package->id;
 }
 
-char *wiki_package_get_href(wiki_package_ptr_t package) {
+char *registry_package_get_href(registry_package_ptr_t package) {
   return package->href;
 }
 
-char *wiki_package_get_description(wiki_package_ptr_t package) {
+char *registry_package_get_description(registry_package_ptr_t package) {
   return package->description;
 }
 
-char *wiki_package_get_category(wiki_package_ptr_t package) {
+char *registry_package_get_category(registry_package_ptr_t package) {
   return package->category;
 }

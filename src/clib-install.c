@@ -293,14 +293,14 @@ static int install_package(const char *slug) {
 
   registries_t registries = registry_manager_init_registries(package->registries, secrets);
   registry_manager_fetch_registries(registries);
-  wiki_package_ptr_t package_info = registry_manger_find_package(registries, slug);
+  registry_package_ptr_t package_info = registry_manger_find_package(registries, slug);
   if (!package_info) {
     debug(&debugger, "Package %s not found in any registry.", slug);
     return -1;
   }
 
 
-  pkg = clib_package_new_from_slug_and_url(slug, wiki_package_get_href(package_info), opts.verbose);
+  pkg = clib_package_new_from_slug_and_url(slug, registry_package_get_href(package_info), opts.verbose);
   if (NULL == pkg)
     return -1;
 

@@ -1,9 +1,15 @@
+//
+// registry-manager.h
+//
+// Copyright (c) 2021 Elbert van de Put
+// MIT licensed
+//
 #ifndef CLIB_SRC_REGISTRY_REGISTRY_MANAGER_H
 #define CLIB_SRC_REGISTRY_REGISTRY_MANAGER_H
 
-#include "list/list.h"
-#include "wiki-registry.h"
 #include "clib-secrets.h"
+#include "list/list.h"
+#include "registry.h"
 
 // Contains an abstraction for handling multiple registries
 
@@ -24,7 +30,7 @@ void registry_manager_fetch_registries(registries_t registries);
  * An iterator through the registries.
  */
 registry_iterator_t registry_iterator_new(registries_t registry);
-wiki_registry_ptr_t registry_iterator_next(registry_iterator_t iterator);
+registry_ptr_t registry_iterator_next(registry_iterator_t iterator);
 void registry_iterator_destroy(registry_iterator_t iterator);
 
 /**
@@ -33,6 +39,6 @@ void registry_iterator_destroy(registry_iterator_t iterator);
  * @param package_id the identifier of the package "<namespace>/<package_name>"
  * @return a pointer to the package if it could be found or NULL
  */
-wiki_package_ptr_t registry_manger_find_package(registries_t registries, const char* package_id);
+registry_package_ptr_t registry_manger_find_package(registries_t registries, const char* package_id);
 
 #endif//CLIB_SRC_REGISTRY_REGISTRY_MANAGER_H

@@ -730,7 +730,6 @@ error:
   free(author);
   free(name);
   free(version);
-  free(url);
   free(json_url);
   free(repo);
   if (!res && json)

@@ -1,7 +1,9 @@
 //
-// Created by eput on 11-03-21.
+// repository.c
 //
-
+// Copyright (c) 2021 Elbert van de Put
+// MIT licensed
+//
 #include "repository.h"
 #include <logger/logger.h>
 
@@ -14,7 +16,6 @@
 #include <libgen.h>
 #include <path-join/path-join.h>
 #include <pthread.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <url/url.h>
@@ -30,7 +31,7 @@ static debug_t _debugger;
 struct repository_file_t {
   const char *url;
   const char *dir;
-  char *file;
+  const char *file;
   const char *secret;
   pthread_t thread;
   pthread_attr_t attr;
@@ -127,7 +128,7 @@ void repository_file_free(repository_file_handle_t file) {
   free(file);
 }
 
-static int fetch_package_file_work(const char *url, const char *dir, char *file, const char *secret) {
+static int fetch_package_file_work(const char *url, const char *dir, const char *file, const char *secret) {
   char *path = NULL;
   int saved = 0;
   int rc = 0;

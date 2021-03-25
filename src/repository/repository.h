@@ -1,3 +1,9 @@
+//
+// repository.h
+//
+// Copyright (c) 2021 Elbert van de Put
+// MIT licensed
+//
 #ifndef CLIB_SRC_REPOSITORY_REPOSITORY_H
 #define CLIB_SRC_REPOSITORY_REPOSITORY_H
 

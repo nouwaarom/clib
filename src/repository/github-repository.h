@@ -1,7 +1,9 @@
 //
-// Created by eput on 11-03-21.
+// github-repository.h
 //
-
+// Copyright (c) 2021 Elbert van de Put
+// MIT licensed
+//
 #ifndef CLIB_SRC_REPOSITORY_GITHUB_REPOSITORY_H
 #define CLIB_SRC_REPOSITORY_GITHUB_REPOSITORY_H
 
