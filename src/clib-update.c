@@ -351,13 +351,13 @@ int main(int argc, char *argv[]) {
   clib_cache_init(CLIB_PACKAGE_CACHE_TIME);
 
   package_opts.skip_cache = 1;
-  package_opts.prefix = package_opts.prefix;
+  package_opts.prefix = opts.prefix;
   package_opts.global = 0;
   package_opts.force = 1;
-  package_opts.token = package_opts.token;
+  package_opts.token = opts.token;
 
 #ifdef HAVE_PTHREADS
-  package_opts.concurrency = package_opts.concurrency;
+  package_opts.concurrency = opts.concurrency;
 #endif
 
   clib_package_set_opts(package_opts);

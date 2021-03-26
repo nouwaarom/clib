@@ -507,7 +507,8 @@ download:
     }
 
 #if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
-    usleep(1024 * 10);
+    struct timespec ts = {0, 1000*1000*10};
+    nanosleep(&ts, NULL);
 #endif
 
 #ifdef HAVE_PTHREADS

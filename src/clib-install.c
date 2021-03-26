@@ -421,7 +421,7 @@ int main(int argc, char *argv[]) {
 
   clib_cache_init(CLIB_PACKAGE_CACHE_TIME);
 
-  clib_package_opts_t install_package_opts;
+  clib_package_opts_t install_package_opts = {0};
   install_package_opts.skip_cache = opts.skip_cache;
   install_package_opts.prefix = opts.prefix;
   install_package_opts.global = opts.global;
