@@ -106,9 +106,11 @@ bool registry_fetch(registry_ptr_t registry) {
     }
     break;
   default:
+    registry->packages = list_new();
     return false;
   }
 
+  registry->packages = list_new();
   return false;
 }
 
