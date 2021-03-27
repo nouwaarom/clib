@@ -48,7 +48,7 @@ void registry_manager_fetch_registries(registries_t registries) {
   registry_iterator_destroy(it);
 }
 
-registry_package_ptr_t registry_manger_find_package(registries_t registries, const char* package_id) {
+registry_package_ptr_t registry_manager_find_package(registries_t registries, const char* package_id) {
   registry_iterator_t it = registry_iterator_new(registries);
   registry_ptr_t reg;
   while ((reg = registry_iterator_next(it))) {

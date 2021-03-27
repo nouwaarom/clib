@@ -281,7 +281,7 @@ static int install_package(const char *slug) {
   char* author = clib_package_parse_author(slug);
   char* name = clib_package_parse_name(slug);
   char* package_id = clib_package_get_id(author, name);
-  registry_package_ptr_t package_info = registry_manger_find_package(registries, package_id);
+  registry_package_ptr_t package_info = registry_manager_find_package(registries, package_id);
   if (!package_info) {
     debug(&debugger, "Package %s not found in any registry.", slug);
     return -1;

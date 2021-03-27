@@ -88,7 +88,7 @@ static inline int install_packages(list_t *list, const char *dir, int verbose) {
     if (NULL == slug)
       goto loop_cleanup;
 
-    registry_package_ptr_t package_info = registry_manger_find_package(registries, package_id);
+    registry_package_ptr_t package_info = registry_manager_find_package(registries, package_id);
     if (!package_info) {
       debug(&_debugger, "Package %s not found in any registry.", slug);
       return -1;
