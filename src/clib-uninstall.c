@@ -18,6 +18,7 @@
 #include "version.h"
 #include <stdlib.h>
 #include <string.h>
+#include "clib-settings.h"
 
 #define CLIB_UNINSTALL_DEFAULT_TARGET "make uninstall"
 
@@ -25,8 +26,6 @@
     defined(__MINGW64__)
 #define setenv(k, v, _) _putenv_s(k, v)
 #endif
-
-const char *manifest_names[] = {"clib.json", "package.json", NULL};
 
 debug_t debugger;
 

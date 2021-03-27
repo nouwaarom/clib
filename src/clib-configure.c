@@ -40,18 +40,13 @@
 #include <path-join/path-join.h>
 #include <str-flatten/str-flatten.h>
 #include <trim/trim.h>
-
+#include "clib-settings.h"
 #include "version.h"
 
-#define CLIB_PACKAGE_CACHE_TIME 30 * 24 * 60 * 60
 #define PROGRAM_NAME "clib-configure"
 
 #define SX(s) #s
 #define S(s) SX(s)
-
-#ifdef HAVE_PTHREADS
-#define MAX_THREADS 4
-#endif
 
 #if defined(_WIN32) || defined(WIN32) || defined(__MINGW32__) ||               \
     defined(__MINGW64__)
@@ -73,8 +68,6 @@ struct options {
   unsigned int concurrency;
 #endif
 };
-
-const char *manifest_names[] = {"clib.json", "package.json", 0};
 
 clib_package_opts_t configure_package_opts = {0};
 clib_package_t *root_package = 0;
