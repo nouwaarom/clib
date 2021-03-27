@@ -1,4 +1,4 @@
-CC     ?= gcc
+CC     ?= cc
 PREFIX ?= /usr/local
 
 BINS = clib clib-install clib-search clib-init clib-configure clib-build clib-update clib-upgrade clib-uninstall
@@ -12,7 +12,7 @@ RM      = rm -f
 MKDIR   = mkdir -p
 
 SRC  = $(wildcard src/*.c)
-COMMON_SRC = $(wildcard src/common/*.c src/registry/*.c src/repository/*)
+COMMON_SRC = $(wildcard src/common/*.c src/registry/*.c src/repository/*.c)
 ALL_SRC = $(wildcard src/*.c src/*.h src/common/*.c src/common/*.h src/registry/*.c src/registry/*.h src/repository/*.h src/repository/*.c test/package/*.c test/cache/*.c)
 SDEPS = $(wildcard deps/*/*.c)
 ODEPS = $(SDEPS:.c=.o)
@@ -21,7 +21,8 @@ OBJS = $(DEPS:.c=.o)
 
 export CC
 
-CFLAGS  += -std=gnu17 -Ideps -Isrc/common -Isrc/repository -Isrc/registry -g -Wall -Werror=return-type -Wno-unused-function $(shell curl-config --cflags)
+CFLAGS  += -std=gnu17 -Ideps -Isrc/common -Isrc/repository -Isrc/registry
+CFLAGS  += -g -Wall -Werror=return-type -Wno-unused-function $(shell curl-config --cflags)
 
 ifdef STATIC
 	CFLAGS  += -DCURL_STATICLIB $(shell deps/curl/bin/curl-config --cflags)
