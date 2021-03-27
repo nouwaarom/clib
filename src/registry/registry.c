@@ -10,7 +10,7 @@
 #include "gumbo-parser/gumbo.h"
 #include "list/list.h"
 #include "registry-internal.h"
-#include "url/url.h"
+#include "../common/url.h"
 #include <logger/logger.h>
 #include <stdlib.h>
 #include <string.h>

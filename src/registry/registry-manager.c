@@ -6,7 +6,7 @@
 //
 #include "registry-manager.h"
 #include <stdlib.h>
-#include "url/url.h"
+#include "../common/url.h"
 
 #define CLIB_WIKI_URL "https://github.com/clibs/clib/wiki/Packages"
 

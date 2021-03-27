@@ -10,6 +10,7 @@
 #include "commander/commander.h"
 #include "common/clib-cache.h"
 #include "common/clib-package.h"
+#include "common/url.h"
 #include "console-colors/console-colors.h"
 #include "debug/debug.h"
 #include "fs/fs.h"
@@ -26,7 +27,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <url/url.h>
 #include "clib-settings.h"
 
 #define CLIB_SEARCH_CACHE_TIME 1 * 24 * 60 * 60

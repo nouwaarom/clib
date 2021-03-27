@@ -5,10 +5,10 @@
 // MIT licensed
 //
 #include "gitlab-repository.h"
+#include "../common/url.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <url/url.h>
 
 #define GITLAB_API_V4_URL "https://%s/api/v4%s/repository/files/%s/raw?ref=master"
 

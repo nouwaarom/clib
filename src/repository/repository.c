@@ -10,6 +10,7 @@
 #include "debug/debug.h"
 #include "github-repository.h"
 #include "gitlab-repository.h"
+#include "../common/url.h"
 #include <clib-package.h>
 #include <clib-secrets.h>
 #include <fs/fs.h>
@@ -18,7 +19,6 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
-#include <url/url.h>
 
 static debug_t _debugger;
 #define _debug(...)                              \

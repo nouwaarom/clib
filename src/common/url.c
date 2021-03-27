@@ -1,5 +1,6 @@
-#define URL_H_IMPLEMENTATION
-#include "url/url.h"
+#ifndef URL_H
 
-// This is a bit of a hack to use url.h in multiple files.
-// It is better if we just split url.h
+#define URL_H_IMPLEMENTATION
+#include "url.h"
+
+#endif
