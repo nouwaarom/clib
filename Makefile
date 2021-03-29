@@ -21,7 +21,7 @@ OBJS = $(DEPS:.c=.o)
 
 export CC
 
-CFLAGS  += -std=gnu17 -Ideps -Isrc/common -Isrc/repository -Isrc/registry
+CFLAGS  += -std=c17 -U__STRICT_ANSI__ -Ideps -Isrc/common -Isrc/repository -Isrc/registry
 CFLAGS  += -g -Wall -Werror=return-type -Wno-unused-function $(shell curl-config --cflags)
 
 ifdef STATIC
