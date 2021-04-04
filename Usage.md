@@ -3,13 +3,12 @@
 This page will cover:
 
  - [How to use libraries](#how-to-use-installed-libraries-for-your-project).
- - [Example Makefile](#example-makefile).
- - [Example `package.json` for executables](#example-packagejson-for-executable-project).
+   - [Example Makefile](#example-makefile).
+   - [Example `clib.json` for executables](#example-packagejson-for-executable-project).
  - [Making your own library package](#making-your-own-libraries).
- - [Example `package.json` for libraries](#example-packagejson-for-libraries).
+   - [Example `clib.json` for libraries](#example-packagejson-for-libraries).
  - [How to install/uninstall executables](#install-and-uninstall-executables-packages).
-
-For instructions on installation, check out the [README](https://github.com/clibs/clib#installation).
+- [How to fetch packages from other sources](#how-to-fetch-packages-from-other-sources).
 
 ## How to use installed libraries for your project
 
@@ -22,17 +21,17 @@ your-project/
 │   ├── trim.c/
 │   │   ├── trim.h
 │   │   ├── trim.c
-│   │   └── package.json
+│   │   └── clib.json
 │   │
 │   ├── commander/
 │   │   ├─ commander.h
 │   │   ├─ commander.c
-│   │   └─ package.json
+│   │   └─ clib.json
 │   │
 │   └── logger/
 │       ├── logger.h
 │       ├── logger.c
-│       └── package.json
+│       └── clib.json
 │
 ├── LICENSE
 │
@@ -40,7 +39,7 @@ your-project/
 │
 ├── README.md
 │
-├── package.json
+├── clib.json
 │
 └── src/
     ├── main.c
@@ -102,11 +101,11 @@ This is a basic Makefile, and should work for most of your projects.
 You *could* have your Makefile install the libraries upon running it, but you
 would only need to do that to get the latest version of the library(s), in this
 case you probably don't want that. You typically want yo get the latest stable version
-for that library. By having a `package.json` file in your project repo, you can
+for that library. By having a `clib.json` file in your project repo, you can
 specify what packages you need, and what version of that package. Now have a look
-at a example `package.json` file for your project: (executable package)
+at a example `clib.json` file for your project: (executable package)
 
-### Example package.json for executable project
+### Example clib.json for executable project
 
 ```json
 {
@@ -125,13 +124,13 @@ at a example `package.json` file for your project: (executable package)
 
 Starting from the top, `"name"` is your package name. `"version"` is your package version. `"repo"` is the location of your project, (not including the `https://github.com/`). `"dependencies"` is all the dependencies your project requires, along with there version. `"install"` is the command to install your program (ran as root), (tip: if your project requires more then one command to install it, like need to run `./configure`, before `make`, then do this: `"install": "./configure && make && make install"`). `"uninstall"` is the command to uninstall your project, [more on that later](#install-and-uninstall-executables).
  
-_**NOTE:** Make sure you have a release as the same version in your `package.json` file, otherwise the download will fail. If you always want your package at the latest version, then put `master` as your version._
+_**NOTE:** Make sure you have a release as the same version in your `clib.json` file, otherwise the download will fail. If you always want your package at the latest version, then put `master` as your version._
 
 ## Making your own libraries
 
-Now that you know how to use libraries, heres how to make your own:
+Now that you know how to use libraries, here is how to make your own:
 
-Like before, heres a typical project directory tree:
+Like before, a typical project directory tree:
 
 ```
 your-library-c/
@@ -140,12 +139,12 @@ your-library-c/
 │   ├── path-join.c/
 │   │   ├── path-join.h
 │   │   ├── path-join.c
-│   │   └── package.json
+│   │   └── clib.json
 │   │
 │   └── strdup/
 │       ├─ strdup.h
 │       ├─ strdup.c
-│       └─ package.json
+│       └─ clib.json
 │
 ├── LICENSE
 │
@@ -153,7 +152,7 @@ your-library-c/
 │
 ├── README.md
 │
-├── package.json
+├── clib.json
 │
 ├── src/
 │   ├── library.c
@@ -165,11 +164,11 @@ your-library-c/
 
 Also like before, your have a `deps` directory (depending on your library, you may not need any
 dependencies). Your `Makefile` in this case it is only for the `test.sh`, not needed for installing.
-`package.json` contains your library name, dependencies (if you need them), keywords, etc... In
+`clib.json` contains your library name, dependencies (if you need them), keywords, etc... In
 `src/` contains your make code (usally the same name as your library). And you have your `test.sh`
 used for testing.
 
-### Example package.json for libraries
+### Example clib.json for libraries
 
 ```
 {
@@ -194,14 +193,14 @@ used for testing.
 }
 ```
 
-The main differences (between this, and the executable `package.json`), is now there is `"src"`,
+The main differences (between this, and the executable `clib.json`), is now there is `"src"`,
 this is where your make library source code is, your can change it, but src is petty standard.
 
 **TIP:** In the `"dependencies"` section, if you define `"*"` as the version, clib will install
 the latest version of that library.
 
 _**NOTE:** Just like your executable package, you will want to tag a release with the same name
-as your version specified in your `package.json`._
+as your version specified in your `clib.json`._
 
 ## Install and uninstall executables packages
 
@@ -230,3 +229,41 @@ $ sudo clib-uninstall visionmedia/mon
 ```
 
 <br>
+
+## How to fetch packages from other sources
+By default `clib` uses the [listing of packages](https://github.com/clibs/clib/wiki/Packages) as the place to look for packages, the registry, and [github.com](https://github.com) for downloading packages.
+You can specify additional registries and download from other repositories than github.
+This might be useful when using `clib` to install a mix of private and public packages.
+
+### Adding additional registries
+Additional registries can be provided in the `clib.json` of a project.
+Currently github wiki's and gitlab &mdash; both [gitlab.com](https://www.gitlab.com) and self hosted &mdash; are supported.
+For gitlab the format is a bit complicated as it has to conform to the gitlab api.
+You should use the same format as the default registry but in a file in a repository instead of in a wiki.
+```json
+{
+   // other definitions
+   "registries": [
+      "https://gitlab.com/api/v4/projects/25447829/repository/files/README.md/raw?ref=master",
+      "https://github.com/awesome-org/clib/wiki/Packages"
+   ]
+}
+```
+
+_**CAUTION:** For gitlab, the url should be of the form `/project/<id>` and not `/group/repo` check [my-gitlab-registry](https://gitlab.com/nouwaarom/my-clib-registry) for an example._
+
+### Downloading from gitlab or private sources
+To download from some sources, authentication might be required.
+To facilitate this `clib_secrets.json` is used to store the credentials.
+
+```json
+{
+    "github.com": "GITHUB_API_TOKEN",
+    "github.example.com": "GITLAB_USER_TOKEN"
+}
+```
+
+Gitlab always requires a secret in order to use the API.
+The secret can be obtained by clicking your profile and then (Preferences -> Access Tokens) and create a token with only `read_repository` rights.
+
+_**TIP:** To prevent accidentally commiting your secrets add `clib_secrets.json` to `.gitignore` and use `clib_secrets.json.dist` to specify for which domains a secret is required._ 
