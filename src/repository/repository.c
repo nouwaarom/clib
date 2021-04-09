@@ -87,7 +87,7 @@ http_get_response_t *repository_fetch_package_manifest(const char *package_url, 
   char *manifest_url = repository_create_url_for_file(package_url, package_id, version, manifest_file, secret);
 
   http_get_response_t *res;
-  if (strstr(package_url, "gitlab") != NULL) {
+  if (secret && strstr(package_url, "gitlab") != NULL) {
     char *key = "PRIVATE-TOKEN";
     unsigned int size = strlen(key) + strlen(secret) + 2;
     char *authentication_header = malloc(size);
@@ -152,7 +152,7 @@ static int fetch_package_file_work(const char *url, const char *dir, const char 
     pthread_mutex_unlock(&mutex);
 #endif
 
-    if (strstr(url, "gitlab") != NULL) {
+    if (secret && strstr(url, "gitlab") != NULL) {
       char *key = "PRIVATE-TOKEN";
       unsigned int size = strlen(key) + strlen(secret) + 2;
       char *authentication_header = malloc(size);
