@@ -29,7 +29,7 @@ static debug_t _debugger;
   })
 
 struct repository_file_t {
-  const char *url;
+  char *url;
   const char *dir;
   const char *file;
   const char *secret;
@@ -98,6 +98,8 @@ http_get_response_t *repository_fetch_package_manifest(const char *package_url, 
     res = http_get_shared(manifest_url, clib_package_curl_share, NULL, 0);
   }
 
+  free(manifest_url);
+
   return res;
 }
 
@@ -116,7 +118,11 @@ repository_file_handle_t repository_download_package_file(const char *package_ur
 
 void repository_file_finish_download(repository_file_handle_t file) {
   void *rc;
-  pthread_join(file->thread, &rc);
+  int success = pthread_join(file->thread, &rc);
+  if (success != 0) {
+    printf("Failed to join thread.\n");
+  }
+  free(rc);
 }
 
 void repository_file_free(repository_file_handle_t file) {
@@ -133,8 +139,6 @@ static int fetch_package_file_work(const char *url, const char *dir, const char 
     return 1;
   }
 
-  _debug("file URL: %s", url);
-
   if (!(path = path_join(dir, basename(file)))) {
     rc = 1;
     goto cleanup;
@@ -145,7 +149,7 @@ static int fetch_package_file_work(const char *url, const char *dir, const char 
 #endif
 
   if (package_opts.force || -1 == fs_exists(path)) {
-    _debug("repository", "fetching %s", url);
+    _debug("fetching %s", url);
     fflush(stdout);
 
 #ifdef HAVE_PTHREADS
@@ -186,7 +190,7 @@ static int fetch_package_file_work(const char *url, const char *dir, const char 
 #ifdef HAVE_PTHREADS
       pthread_mutex_lock(&mutex);
 #endif
-      _debug("repository", "saved %s", path);
+      _debug("saved %s", path);
       fflush(stdout);
 #ifdef HAVE_PTHREADS
       pthread_mutex_unlock(&mutex);
