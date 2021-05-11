@@ -14,11 +14,12 @@
 #include <clib-secrets.h>
 #include <fs/fs.h>
 #include <libgen.h>
+#include <mkdirp/mkdirp.h>
 #include <path-join/path-join.h>
 #include <pthread.h>
 #include <stdlib.h>
-#include <string.h>
 #include <strdup/strdup.h>
+#include <string.h>
 #include <url/url.h>
 
 static debug_t _debugger;
@@ -137,18 +138,21 @@ static int fetch_package_file_work(const char *url, const char *dir, const char 
     return 1;
   }
 
-  char* file_copy = strdup(file);
-  if (!(path = path_join(dir, basename(file_copy)))) {
-    rc = 1;
-    goto cleanup;
+  // TODO, make sure this path is canonical.
+  if (!(path = path_join(dir, file))) {
+    return 1;
   }
+  // Make sure the directory exists.
+  char* path_copy = strdup(path);
+  char* dir_name = dirname(path_copy);
+  mkdirp(dir_name, 0777);
 
 #ifdef HAVE_PTHREADS
   pthread_mutex_lock(&mutex);
 #endif
 
   if (package_opts.force || -1 == fs_exists(path)) {
-    _debug("fetching %s", url);
+    _debug("fetching %s and storing to %s", url, path);
     fflush(stdout);
 
 #ifdef HAVE_PTHREADS
@@ -198,7 +202,7 @@ static int fetch_package_file_work(const char *url, const char *dir, const char 
 
 cleanup:
   free(path);
-  free(file_copy);
+  free(path_copy);
 
   return rc;
 }
