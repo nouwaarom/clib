@@ -252,18 +252,18 @@ You should use the same format as the default registry but in a file in a reposi
 
 _**CAUTION:** For gitlab, the url should be of the form `/project/<id>` and not `/group/repo` check [my-gitlab-registry](https://gitlab.com/nouwaarom/my-clib-registry) for an example._
 
-### Downloading from gitlab or private sources
-To download from some sources, authentication might be required.
+### Downloading private repositories from gitlab or other sources
+To download from some sources, authentication is required.
 To facilitate this `clib_secrets.json` is used to store the credentials.
 
 ```json
 {
     "github.com": "GITHUB_API_TOKEN",
-    "github.example.com": "GITLAB_USER_TOKEN"
+    "gitlab.example.com": "GITLAB_USER_TOKEN"
 }
 ```
 
-Gitlab always requires a secret in order to use the API.
+Gitlab requires a secret in order to download private repositories.
 The secret can be obtained by clicking your profile and then (Preferences -> Access Tokens) and create a token with only `read_repository` rights.
 
 _**TIP:** To prevent accidentally commiting your secrets add `clib_secrets.json` to `.gitignore` and use `clib_secrets.json.dist` to specify for which domains a secret is required._ 
