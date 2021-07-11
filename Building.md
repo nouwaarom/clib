@@ -36,5 +36,5 @@ $ ./dockcross-windows-x64 bash -c 'cd '"$CURL_SRC"' && ./configure --prefix="/wo
 $ ./dockcross-windows-x64 bash -c 'cd '"$CURL_SRC"' && make'
 $ ./dockcross-windows-x64 bash -c 'cd '"$CURL_SRC"' && make install'
 $ git clone https://github.com/clibs/clib.git && cd clib
-$ ./dockcross-windows-x64 make all NO_PTHREADS=1 EXE=true
+$ ./dockcross-windows-x64 make all STATIC=1 EXE=true
 ```
